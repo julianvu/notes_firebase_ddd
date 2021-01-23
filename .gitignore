@@ -43,3 +43,5 @@ app.*.map.json
 # Xcode related
 xcuserdata/
 
+ios/Flutter/Debug.xcconfig
+ios/Flutter/Release.xcconfig
