@@ -12,6 +12,7 @@ import 'package:notes_firebase_ddd_course/domain/core/value_validators.dart';
 /// Validation during object creation makes illegal states unrepresentable!
 class EmailAddress extends ValueObject<String> {
   /// The value of this email address.
+  @override
   final Either<ValueFailure<String>, String> value;
 
   /// Factory constructor for creating EmailAddress objects.
@@ -35,6 +36,7 @@ class EmailAddress extends ValueObject<String> {
 /// are validated on creation.
 class Password extends ValueObject<String> {
   /// The value of this email address.
+  @override
   final Either<ValueFailure<String>, String> value;
 
   /// Factory constructor for creating Password objects.
