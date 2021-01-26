@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:notes_firebase_ddd_course/domain/core/errors.dart';
 import 'package:notes_firebase_ddd_course/domain/core/failures.dart';
+import 'package:uuid/uuid.dart';
 
 @immutable
 abstract class ValueObject<T> {
@@ -35,4 +36,25 @@ abstract class ValueObject<T> {
   /// Returns the string representation of this EmailAddress.
   @override
   String toString() => 'Value(value: $value)';
+}
+
+class UniqueId extends ValueObject<String> {
+  @override
+  // TODO: implement value
+  final Either<ValueFailure<String>, String> value;
+
+  factory UniqueId() {
+    return UniqueId._(
+      right(Uuid().v1()),
+    );
+  }
+
+  factory UniqueId.fromUniqueString(String uniqueId) {
+    assert(uniqueId != null);
+    return UniqueId._(
+      right(uniqueId),
+    );
+  }
+
+  const UniqueId._(this.value);
 }
