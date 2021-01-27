@@ -1,5 +1,56 @@
 import 'package:dartz/dartz.dart';
+import 'package:kt_dart/kt.dart';
 import 'package:notes_firebase_ddd_course/domain/core/failures.dart';
+
+Either<ValueFailure<String>, String> validateMaxStringLength(
+    String input, int maxLength) {
+  if (input.length <= maxLength) {
+    return right(input);
+  } else {
+    return left(
+      ValueFailure.exceedingLength(
+        failedValue: input,
+        max: maxLength,
+      ),
+    );
+  }
+}
+
+/// Validates [input] to ensure it is not empty
+Either<ValueFailure<String>, String> validateStringNotEmpty(String input) {
+  if (input.isNotEmpty) {
+    return right(input);
+  } else {
+    return left(
+      ValueFailure.empty(failedValue: input),
+    );
+  }
+}
+
+/// Validates [input] to ensure it is only a single line
+Either<ValueFailure<String>, String> validateSingleLine(String input) {
+  if (!input.contains("\n")) {
+    return right(input);
+  } else {
+    return left(
+      ValueFailure.multiline(failedValue: input),
+    );
+  }
+}
+
+Either<ValueFailure<KtList<T>>, KtList<T>> validateMaxListLength<T>(
+    KtList<T> input, int maxLength) {
+  if (input.size <= maxLength) {
+    return right(input);
+  } else {
+    return left(
+      ValueFailure.listTooLong(
+        failedValue: input,
+        max: maxLength,
+      ),
+    );
+  }
+}
 
 /// Validates [input] to ensure it is properly formatted as an email address
 Either<ValueFailure<String>, String> validateEmailAddress(String input) {
