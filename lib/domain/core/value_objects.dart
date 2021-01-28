@@ -18,6 +18,14 @@ abstract class ValueObject<T> {
     return value.fold((left) => throw UnexpectedValueError(left), id);
   }
 
+  /// Genericizes value if ValueFailure or unit if value is valid
+  Either<ValueFailure<dynamic>, Unit> get failureOrUnit {
+    return value.fold(
+      (l) => left(l),
+      (r) => right(unit),
+    );
+  }
+
   /// Returns `true` if the value is valid.
   bool isValid() => value.isRight();
 
