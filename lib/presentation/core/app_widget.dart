@@ -29,6 +29,9 @@ class AppWidget extends StatelessWidget {
         theme: ThemeData.light().copyWith(
           primaryColor: Colors.green[800],
           accentColor: Colors.blueAccent,
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: Colors.blue[900],
+          ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
           inputDecorationTheme: InputDecorationTheme(
             border: OutlineInputBorder(
