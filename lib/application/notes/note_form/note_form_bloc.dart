@@ -58,16 +58,24 @@ class NoteFormBloc extends Bloc<NoteFormEvent, NoteFormState> {
         );
       },
       saved: (e) async* {
+        Either<NoteFailure, Unit> failureOrSuccess;
+
         yield state.copyWith(
           isSaving: true,
           saveFailureOrSuccessOption: none(),
         );
 
         if (state.note.failureOption.isNone()) {
-          state.isEditing
+          failureOrSuccess = state.isEditing
               ? await _noteRepository.update(state.note)
               : await _noteRepository.create(state.note);
         }
+
+        yield state.copyWith(
+          isSaving: false,
+          showErrorMessages: true,
+          saveFailureOrSuccessOption: optionOf(failureOrSuccess),
+        );
       },
     );
   }
