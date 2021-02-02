@@ -16,26 +16,66 @@ class NoteRepository implements INoteRepository {
   NoteRepository(this._firestore);
 
   @override
-  Future<Either<NoteFailure, Unit>> create(Note note) {
-    // TODO: implement create
-    throw UnimplementedError();
+  Future<Either<NoteFailure, Unit>> create(Note note) async {
+    try {
+      final DocumentReference userDoc = await _firestore.userDocument();
+      final NoteDTO noteDTO = NoteDTO.fromDomain(note);
+
+      await userDoc.noteCollection.doc(noteDTO.id).set(noteDTO.toJson());
+
+      return right(unit);
+    } on FirebaseException catch (e) {
+      if (e.message.contains("PERMISSION_DENIED")) {
+        return left(const NoteFailure.insufficientPermission());
+      } else {
+        return left(const NoteFailure.unexpected());
+      }
+    }
   }
 
   @override
-  Future<Either<NoteFailure, Unit>> delete(Note note) {
-    // TODO: implement delete
-    throw UnimplementedError();
+  Future<Either<NoteFailure, Unit>> delete(Note note) async {
+    try {
+      final DocumentReference userDoc = await _firestore.userDocument();
+      final String noteID = note.id.getOrCrash();
+
+      await userDoc.noteCollection.doc(noteID).delete();
+
+      return right(unit);
+    } on FirebaseException catch (e) {
+      if (e.message.contains("PERMISSION_DENIED")) {
+        return left(const NoteFailure.insufficientPermission());
+      } else if (e.message.contains("NOT_FOUND")) {
+        return left(const NoteFailure.unableToUpdate());
+      } else {
+        return left(const NoteFailure.unexpected());
+      }
+    }
   }
 
   @override
-  Future<Either<NoteFailure, Unit>> update(Note note) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<Either<NoteFailure, Unit>> update(Note note) async {
+    try {
+      final DocumentReference userDoc = await _firestore.userDocument();
+      final NoteDTO noteDTO = NoteDTO.fromDomain(note);
+
+      await userDoc.noteCollection.doc(noteDTO.id).update(noteDTO.toJson());
+
+      return right(unit);
+    } on FirebaseException catch (e) {
+      if (e.message.contains("PERMISSION_DENIED")) {
+        return left(const NoteFailure.insufficientPermission());
+      } else if (e.message.contains("NOT_FOUND")) {
+        return left(const NoteFailure.unableToUpdate());
+      } else {
+        return left(const NoteFailure.unexpected());
+      }
+    }
   }
 
   @override
   Stream<Either<NoteFailure, KtList<Note>>> watchAll() async* {
-    final userDoc = await _firestore.userDocument();
+    final DocumentReference userDoc = await _firestore.userDocument();
     yield* userDoc.noteCollection
         .orderBy("serverTimeStamp", descending: true)
         .snapshots()
